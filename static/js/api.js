@@ -74,4 +74,10 @@ class APIClient {
 }
 
 // Global API client instance
-const api = new APIClient();
+try {
+    const api = new APIClient();
+    window.api = api;
+    console.log('✅ api.js loaded and window.api defined');
+} catch (error) {
+    console.error('❌ Failed to initialize API client:', error);
+}
