@@ -139,22 +139,5 @@ class BaseTool {
     }
 }
 
-/**
- * Tool factory - creates tools based on configuration
- */
-class ToolFactory {
-    static create(type, config) {
-        const toolClasses = {
-            'base64': Base64Tool,
-            'json-beautify': JSONBeautifyTool,
-            'json-diff': JSONDiffTool
-        };
-
-        const ToolClass = toolClasses[type] || BaseTool;
-        return new ToolClass(config);
-    }
-}
-
 // Export for use in other files
 window.BaseTool = BaseTool;
-window.ToolFactory = ToolFactory;

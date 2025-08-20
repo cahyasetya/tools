@@ -181,4 +181,4 @@ class UIManager {
 }
 
 // Global UI manager instance
-const ui = new UIManager();
+window.ui = new UIManager();

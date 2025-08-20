@@ -17,7 +17,8 @@ export default class JSONBeautifyTool extends BaseTool {
                 { id: 'beautify-btn', action: 'beautifyJSON' },
                 { id: 'minify-btn', action: 'minifyJSON' },
                 { id: 'validate-btn', action: 'validateJSON' },
-                { id: 'clear-btn', action: 'clearAll' }
+                { id: 'clear-input-btn', action: 'clearAll' },
+                { id: 'copy-json-output-btn', action: 'copyJsonOutput' }
             ],
             validateInputs: false
         });
@@ -91,6 +92,10 @@ export default class JSONBeautifyTool extends BaseTool {
     clearAll() {
         this.clearFields();
         ui.updateStats('');
+    }
+
+    copyJsonOutput() {
+        ui.copyElementValue('json-output');
     }
 
     // Tool-specific utilities

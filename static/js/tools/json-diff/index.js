@@ -16,11 +16,12 @@ export default class JSONDiffTool extends BaseTool {
             ],
             buttons: [
                 { id: 'compare-btn', action: 'compareJSON' },
-                { id: 'validate1-btn', action: 'validateJSON1' },
-                { id: 'validate2-btn', action: 'validateJSON2' },
-                { id: 'clear1-btn', action: 'clearJSON1' },
-                { id: 'clear2-btn', action: 'clearJSON2' },
-                { id: 'clear-diff-btn', action: 'clearDiff' }
+                { id: 'validate-json1-btn', action: 'validateJSON1' },
+                { id: 'validate-json2-btn', action: 'validateJSON2' },
+                { id: 'clear-json1-btn', action: 'clearJSON1' },
+                { id: 'clear-json2-btn', action: 'clearJSON2' },
+                { id: 'clear-diff-btn', action: 'clearDiff' },
+                { id: 'copy-diff-output-btn', action: 'copyDiffOutput' }
             ]
         });
     }
@@ -104,6 +105,18 @@ export default class JSONDiffTool extends BaseTool {
             output.className = output.className.replace(' text-green-400', '');
         }
         this.hideDiffStats();
+    }
+
+    copyDiffOutput() {
+        const output = ui.getElement('diff-output');
+        const text = output.textContent;
+        
+        if (text && text !== 'Diff result will appear here...') {
+            ui.copyToClipboard(text);
+            ui.showMessage('Diff copied to clipboard', 'success');
+        } else {
+            ui.showMessage('Nothing to copy', 'error');
+        }
     }
 
     // Tool-specific utilities

@@ -27,11 +27,13 @@ class AppManager {
      */
     async _performInit() {
         console.log('🚀 Initializing CTools Application');
+        console.log('window.api at _performInit start:', window.api);
         
         try {
             // Initialize core systems
             await this.initializeCore();
             
+            console.log('window.api before initializeTools:', window.api);
             // Discover and load tools
             await this.initializeTools();
             
@@ -76,6 +78,10 @@ class AppManager {
         // Discover available tools
         const availableTools = await toolLoader.discoverTools();
         console.log(`Found ${availableTools.length} available tools`);
+        
+        // Initialize navigation builder
+        navigationBuilder.init(toolLoader);
+        await navigationBuilder.updateNavigation();
         
         // Load essential tools
         const essentialTools = await toolLoader.loadEssentialTools();
@@ -123,20 +129,12 @@ class AppManager {
      * Get tool ID from current route
      */
     getToolIdFromRoute(route) {
-        const routeMap = {
-            '/base64': 'base64',
-            '/json-beautify': 'json-beautify',
-            '/json-diff': 'json-diff',
-            '/url-encode': 'url-encoder',
-            '/hash': 'hash-generator',
-            '/uuid': 'uuid-generator',
-            '/jwt': 'jwt-decoder',
-            '/color': 'color-picker',
-            '/qr': 'qr-generator',
-            '/regex': 'regex-tester'
-        };
-        
-        return routeMap[route] || null;
+        for (const [toolId, manifest] of toolLoader.toolManifests.entries()) {
+            if (manifest.routes && manifest.routes.includes(route)) {
+                return toolId;
+            }
+        }
+        return null;
     }
 
     /**

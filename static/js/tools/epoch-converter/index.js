@@ -21,7 +21,12 @@ export default class EpochConverterTool extends BaseTool {
                 { id: 'to-human-btn', action: 'convertToHuman' },
                 { id: 'to-timestamp-btn', action: 'convertToTimestamp' },
                 { id: 'current-time-btn', action: 'getCurrentTime' },
-                { id: 'clear-btn', action: 'clearAll' }
+                { id: 'clear-btn', action: 'clearAll' },
+                { id: 'copy-datetime-output-btn', action: 'copyDatetimeOutput' },
+                { id: 'copy-iso-output-btn', action: 'copyIsoOutput' },
+                { id: 'copy-utc-output-btn', action: 'copyUtcOutput' },
+                { id: 'copy-timestamp-output-btn', action: 'copyTimestampOutput' },
+                { id: 'sample-timestamps-btn', action: 'loadSampleTimestamps' }
             ]
         });
 
@@ -78,6 +83,7 @@ export default class EpochConverterTool extends BaseTool {
             ui.setValue('utc-output', utcDate);
 
             this.displayTimezoneConversions(date);
+            this.displayTimestampFormats(Math.floor(timestamp), timestamp * 1000);
             ui.showMessage('Timestamp converted successfully', 'success');
 
         } catch (error) {
@@ -136,6 +142,40 @@ export default class EpochConverterTool extends BaseTool {
     clearAll() {
         this.clearFields();
         this.clearAdditionalOutputs();
+    }
+
+    copyDatetimeOutput() {
+        ui.copyElementValue('datetime-output');
+    }
+
+    copyIsoOutput() {
+        ui.copyElementValue('iso-output');
+    }
+
+    copyUtcOutput() {
+        ui.copyElementValue('utc-output');
+    }
+
+    copyTimestampOutput() {
+        ui.copyElementValue('timestamp-output');
+    }
+
+    loadSampleTimestamps() {
+        const samples = [
+            { name: "Current Time", value: Math.floor(Date.now() / 1000) },
+            { name: "Unix Epoch Start", value: 0 },
+            { name: "Y2K", value: 946684800 },
+            { name: "2024 New Year", value: 1704067200 },
+            { name: "One Hour Ago", value: Math.floor(Date.now() / 1000) - 3600 },
+            { name: "One Day Ago", value: Math.floor(Date.now() / 1000) - 86400 }
+        ];
+        
+        let message = "Sample timestamps:\n\n";
+        samples.forEach(sample => {
+            message += `${sample.name}: ${sample.value}\n`;
+        });
+        
+        alert(message);
     }
 
     // Helper methods
@@ -231,7 +271,7 @@ export default class EpochConverterTool extends BaseTool {
         elementsToClear.forEach(id => {
             const element = ui.getElement(id);
             if (element) {
-                element.innerHTML = '';
+                element.innerHTML = '<p class="text-center py-8">Convert a timestamp to see different formats</p>';
             }
         });
     }

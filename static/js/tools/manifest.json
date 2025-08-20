@@ -20,7 +20,7 @@
       "order": 3
     },
     "text": {
-      "name": "Text Processing", 
+      "name": "Text Processing",
       "description": "Text manipulation and analysis tools",
       "icon": "📄",
       "order": 4
@@ -53,7 +53,7 @@
     },
     "json-beautify": {
       "name": "JSON Beautifier",
-      "version": "1.0.0", 
+      "version": "1.0.0",
       "author": "CTools Team",
       "description": "Format, validate, and minify JSON data with syntax highlighting",
       "category": "json",
@@ -66,7 +66,7 @@
     "json-diff": {
       "name": "JSON Diff Tool",
       "version": "1.0.0",
-      "author": "CTools Team", 
+      "author": "CTools Team",
       "description": "Compare two JSON objects and highlight differences",
       "category": "json",
       "tags": ["json", "diff", "compare", "merge"],
@@ -75,96 +75,17 @@
       "features": ["compare", "highlight", "copy", "validate"],
       "icon": "🔍"
     },
-    "url-encoder": {
-      "name": "URL Encoder/Decoder",
+    "epoch-converter": {
+      "name": "Epoch Converter",
       "version": "1.0.0",
       "author": "CTools Team",
-      "description": "Encode and decode URLs and URI components",
-      "category": "encoding",
-      "tags": ["url", "uri", "encoding", "web"],
-      "routes": ["/url-encode"],
-      "dependencies": [],
-      "features": ["encode", "decode", "component", "full-url"],
-      "icon": "🌐",
-      "enabled": false
-    },
-    "hash-generator": {
-      "name": "Hash Generator", 
-      "version": "1.0.0",
-      "author": "CTools Team",
-      "description": "Generate MD5, SHA1, SHA256 and other hashes",
-      "category": "hash",
-      "tags": ["hash", "md5", "sha1", "sha256", "crypto"],
-      "routes": ["/hash"],
-      "dependencies": [],
-      "features": ["md5", "sha1", "sha256", "sha512", "compare"],
-      "icon": "🔐",
-      "enabled": false
-    },
-    "uuid-generator": {
-      "name": "UUID Generator",
-      "version": "1.0.0",
-      "author": "CTools Team",
-      "description": "Generate UUID v1, v4 and other unique identifiers",
+      "description": "Convert between Unix timestamps and human-readable dates",
       "category": "utility",
-      "tags": ["uuid", "guid", "unique", "identifier"],
-      "routes": ["/uuid"],
+      "tags": ["epoch", "timestamp", "unix", "time", "date", "converter"],
+      "routes": ["/epoch-converter"],
       "dependencies": [],
-      "features": ["uuid-v1", "uuid-v4", "bulk-generate", "validate"],
-      "icon": "🆔",
-      "enabled": false
-    },
-    "jwt-decoder": {
-      "name": "JWT Decoder",
-      "version": "1.0.0",
-      "author": "CTools Team",
-      "description": "Decode and validate JSON Web Tokens",
-      "category": "web",
-      "tags": ["jwt", "json-web-token", "decode", "validate"],
-      "routes": ["/jwt"],
-      "dependencies": [],
-      "features": ["decode", "validate", "header", "payload"],
-      "icon": "🎫",
-      "enabled": false
-    },
-    "color-picker": {
-      "name": "Color Picker & Converter",
-      "version": "1.0.0",
-      "author": "CTools Team", 
-      "description": "Pick colors and convert between HEX, RGB, HSL formats",
-      "category": "web",
-      "tags": ["color", "hex", "rgb", "hsl", "picker"],
-      "routes": ["/color"],
-      "dependencies": [],
-      "features": ["picker", "convert", "palette", "gradient"],
-      "icon": "🎨",
-      "enabled": false
-    },
-    "qr-generator": {
-      "name": "QR Code Generator",
-      "version": "1.0.0",
-      "author": "CTools Team",
-      "description": "Generate QR codes from text, URLs, and other data",
-      "category": "utility",
-      "tags": ["qr-code", "generate", "barcode", "mobile"],
-      "routes": ["/qr"],
-      "dependencies": ["qrcode"],
-      "features": ["generate", "download", "customize", "batch"],
-      "icon": "📱",
-      "enabled": false
-    },
-    "regex-tester": {
-      "name": "Regex Tester",
-      "version": "1.0.0",
-      "author": "CTools Team",
-      "description": "Test and debug regular expressions with live matching",
-      "category": "text", 
-      "tags": ["regex", "regexp", "test", "match", "replace"],
-      "routes": ["/regex"],
-      "dependencies": [],
-      "features": ["test", "match", "replace", "flags", "cheatsheet"],
-      "icon": "🔍",
-      "enabled": false
+      "features": ["convert", "live-clock", "timezone"],
+      "icon": "⏰"
     }
   }
 }

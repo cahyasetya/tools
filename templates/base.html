@@ -84,6 +84,7 @@
     <!-- Core System -->
     <script src="/static/js/core/tool-registry.js"></script>
     <script src="/static/js/core/tool-loader.js"></script>
+    <script src="/static/js/core/navigation-builder.js"></script>
     <script src="/static/js/core/app-manager.js"></script>
     
     <!-- Fallback tools (for backward compatibility) -->
@@ -98,27 +99,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await appManager.init();
             
-            // Legacy support for existing onclick handlers
-            window.legacyFunctions = {
-                encodeText: () => appManager.currentTool?.encodeText?.(),
-                decodeText: () => appManager.currentTool?.decodeText?.(),
-                beautifyJSON: () => appManager.currentTool?.beautifyJSON?.(),
-                minifyJSON: () => appManager.currentTool?.minifyJSON?.(),
-                validateJSON: () => appManager.currentTool?.validateJSON?.(),
-                clearInput: () => appManager.currentTool?.clearAll?.(),
-                compareJSON: () => appManager.currentTool?.compareJSON?.(),
-                validateJSON1: () => appManager.currentTool?.validateJSON1?.(),
-                validateJSON2: () => appManager.currentTool?.validateJSON2?.(),
-                clearJSON: (field) => {
-                    if (field === 'json1-input') appManager.currentTool?.clearJSON1?.();
-                    if (field === 'json2-input') appManager.currentTool?.clearJSON2?.();
-                },
-                clearDiff: () => appManager.currentTool?.clearDiff?.(),
-                copyToClipboard: (elementId) => ui.copyElementValue(elementId)
-            };
-            
-            // Make legacy functions available globally
-            Object.assign(window, window.legacyFunctions);
         });
         
         // Cleanup on page unload
@@ -130,13 +110,13 @@
         const searchInput = document.getElementById('search-input');
         const searchResults = document.getElementById('search-results');
         
-        // Tools data for search
-        const tools = [
-            { name: 'Base64 Encoder', url: '/base64', description: 'Encode and decode Base64 strings', keywords: ['base64', 'encode', 'decode', 'encoding'] },
-            { name: 'JSON Beautifier', url: '/json-beautify', description: 'Format and prettify JSON data', keywords: ['json', 'beautify', 'format', 'pretty', 'validate'] },
-            { name: 'JSON Diff', url: '/json-diff', description: 'Compare two JSON objects', keywords: ['json', 'diff', 'compare', 'difference'] },
-            { name: 'Epoch Converter', url: '/epoch-converter', description: 'Convert timestamps to human dates', keywords: ['epoch', 'timestamp', 'unix', 'time', 'date', 'converter'] }
-        ];
+        // Tools data for search (dynamically updated)
+        let tools = [];
+        
+        // Function to update search tools from manifest
+        window.updateSearchTools = function(newTools) {
+            tools = newTools;
+        };
         
         let selectedIndex = -1;
         let currentResults = [];

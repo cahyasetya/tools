@@ -17,7 +17,9 @@ export default class Base64Tool extends BaseTool {
             ],
             buttons: [
                 { id: 'encode-btn', action: 'encodeText' },
-                { id: 'decode-btn', action: 'decodeText' }
+                { id: 'decode-btn', action: 'decodeText' },
+                { id: 'copy-encode-output-btn', action: 'copyEncodeOutput' },
+                { id: 'copy-decode-output-btn', action: 'copyDecodeOutput' }
             ]
         });
     }
@@ -54,6 +56,14 @@ export default class Base64Tool extends BaseTool {
         } else {
             ui.showMessage(result.error, 'error');
         }
+    }
+
+    copyEncodeOutput() {
+        ui.copyElementValue('encode-output');
+    }
+
+    copyDecodeOutput() {
+        ui.copyElementValue('decode-output');
     }
 
     // Tool-specific utilities
