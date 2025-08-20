@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Tool Generator - CTools{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-100 mb-8">🚀 Tool Generator</h1>
+    <p class="text-lg text-gray-400 mb-8">Generate new tools for your CTools platform in seconds!</p>
+    
+    <!-- Generator Form -->
+    <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-100 mb-6">Tool Configuration</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Basic Info -->
+            <div class="space-y-4">
+                <div>
+                    <label for="tool-id" class="block text-sm font-medium text-gray-300 mb-2">Tool ID *</label>
+                    <input type="text" id="tool-id" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="url-encoder" maxlength="50">
+                    <p class="text-xs text-gray-500 mt-1">Lowercase, use hyphens (used in URLs)</p>
+                </div>
+                
+                <div>
+                    <label for="tool-name" class="block text-sm font-medium text-gray-300 mb-2">Tool Name *</label>
+                    <input type="text" id="tool-name" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="URL Encoder/Decoder">
+                </div>
+                
+                <div>
+                    <label for="tool-author" class="block text-sm font-medium text-gray-300 mb-2">Author</label>
+                    <input type="text" id="tool-author" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Name" value="CTools User">
+                </div>
+                
+                <div>
+                    <label for="tool-description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                    <textarea id="tool-description" rows="3" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Brief description of what this tool does"></textarea>
+                </div>
+            </div>
+            
+            <!-- Configuration -->
+            <div class="space-y-4">
+                <div>
+                    <label for="tool-category" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                    <select id="tool-category" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="encoding">🔤 Encoding & Decoding</option>
+                        <option value="json">📝 JSON Tools</option>
+                        <option value="hash">🔐 Hash & Crypto</option>
+                        <option value="text" selected>📄 Text Processing</option>
+                        <option value="web">🌐 Web Development</option>
+                        <option value="utility">🛠️ Utilities</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="tool-template" class="block text-sm font-medium text-gray-300 mb-2">Template Type</label>
+                    <select id="tool-template" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="basic" selected>Basic Tool (Input → Process → Output)</option>
+                        <option value="api">API Tool (Backend Processing)</option>
+                        <option value="file">File Processing Tool (Upload & Convert)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1" id="template-description">Simple input/output processing tool</p>
+                </div>
+                
+                <div>
+                    <label for="tool-features" class="block text-sm font-medium text-gray-300 mb-2">Features (comma-separated)</label>
+                    <input type="text" id="tool-features" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="encode, decode, validate">
+                    <p class="text-xs text-gray-500 mt-1">Used for search and categorization</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Generate Button -->
+        <div class="mt-6 text-center">
+            <button id="generate-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                🚀 Generate Tool
+            </button>
+        </div>
+    </div>
+    
+    <!-- Generated Output -->
+    <div id="generated-output" class="hidden">
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-100 mb-4">📋 Setup Instructions</h2>
+            <div id="instructions-content" class="bg-gray-700 rounded p-4 font-mono text-sm text-green-400 whitespace-pre-wrap overflow-x-auto"></div>
+            <button onclick="copyToClipboard('instructions-content')" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                📋 Copy Instructions
+            </button>
+        </div>
+        
+        <!-- Generated Files -->
+        <div class="space-y-6" id="generated-files">
+            <!-- Files will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <!-- Template Info -->
+    <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <h2 class="text-xl font-semibold text-gray-100 mb-4">📚 Template Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-4 bg-gray-700 rounded-lg">
+                <div class="text-3xl mb-2">🔧</div>
+                <h3 class="font-semibold text-gray-100 mb-2">Basic Tool</h3>
+                <p class="text-sm text-gray-400">Simple input → process → output pattern. Perfect for text transformers, calculators, encoders.</p>
+            </div>
+            
+            <div class="text-center p-4 bg-gray-700 rounded-lg">
+                <div class="text-3xl mb-2">🌐</div>
+                <h3 class="font-semibold text-gray-100 mb-2">API Tool</h3>
+                <p class="text-sm text-gray-400">Makes backend API calls for complex processing. Ideal for external services, validations.</p>
+            </div>
+            
+            <div class="text-center p-4 bg-gray-700 rounded-lg">
+                <div class="text-3xl mb-2">📁</div>
+                <h3 class="font-semibold text-gray-100 mb-2">File Tool</h3>
+                <p class="text-sm text-gray-400">Handles file uploads and processing. Great for converters, analyzers, parsers.</p>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+            <h4 class="font-semibold text-blue-300 mb-2">💡 Tips for Great Tools</h4>
+            <ul class="text-sm text-blue-200 space-y-1">
+                <li>• Use clear, descriptive names (e.g., "URL Encoder/Decoder" not "URL Tool")</li>
+                <li>• Choose the right category for easy discovery</li>
+                <li>• Add relevant features/tags for search functionality</li>
+                <li>• Start with Basic template unless you need special features</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div id="message" class="mt-4 hidden p-4 rounded-md"></div>
+</div>
+
+<script>
+// Template descriptions
+const templateDescriptions = {
+    'basic': 'Simple input/output processing tool',
+    'api': 'Tool that makes backend API calls',
+    'file': 'Tool for processing uploaded files'
+};
+
+// Update template description
+document.getElementById('tool-template').addEventListener('change', function() {
+    document.getElementById('template-description').textContent = templateDescriptions[this.value];
+});
+
+// Generate tool
+document.getElementById('generate-btn').addEventListener('click', function() {
+    const toolId = document.getElementById('tool-id').value.trim();
+    const toolName = document.getElementById('tool-name').value.trim();
+    
+    if (!toolId || !toolName) {
+        showMessage('Please fill in Tool ID and Tool Name', 'error');
+        return;
+    }
+    
+    // Validate tool ID format
+    if (!/^[a-z][a-z0-9-]*$/.test(toolId)) {
+        showMessage('Tool ID must start with a letter and contain only lowercase letters, numbers, and hyphens', 'error');
+        return;
+    }
+    
+    try {
+        const config = {
+            id: toolId,
+            name: toolName,
+            author: document.getElementById('tool-author').value.trim() || 'CTools User',
+            description: document.getElementById('tool-description').value.trim() || `${toolName} tool`,
+            category: document.getElementById('tool-category').value,
+            template: document.getElementById('tool-template').value,
+            features: document.getElementById('tool-features').value.split(',').map(f => f.trim()).filter(f => f)
+        };
+        
+        // Generate tool using the tool generator
+        const result = toolGenerator.generateTool(config);
+        
+        // Display results
+        displayGeneratedTool(result);
+        showMessage('Tool generated successfully! Follow the instructions below.', 'success');
+        
+    } catch (error) {
+        showMessage(`Error generating tool: ${error.message}`, 'error');
+    }
+});
+
+function displayGeneratedTool(result) {
+    // Show instructions
+    document.getElementById('instructions-content').textContent = result.instructions;
+    
+    // Show generated files
+    const filesContainer = document.getElementById('generated-files');
+    filesContainer.innerHTML = '';
+    
+    Object.entries(result.files).forEach(([filename, content]) => {
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6';
+        
+        fileDiv.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-100">📄 ${filename}</h3>
+                <button onclick="copyFileContent('${filename}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                    Copy
+                </button>
+            </div>
+            <pre id="file-${filename}" class="bg-gray-700 rounded p-4 text-sm text-gray-100 overflow-x-auto whitespace-pre-wrap">${content}</pre>
+        `;
+        
+        filesContainer.appendChild(fileDiv);
+    });
+    
+    // Show output section
+    document.getElementById('generated-output').classList.remove('hidden');
+    
+    // Scroll to results
+    document.getElementById('generated-output').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyFileContent(filename) {
+    const content = document.getElementById(`file-${filename}`).textContent;
+    navigator.clipboard.writeText(content).then(() => {
+        showMessage(`${filename} copied to clipboard`, 'success');
+    }).catch(() => {
+        showMessage('Failed to copy to clipboard', 'error');
+    });
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        navigator.clipboard.writeText(element.textContent).then(() => {
+            showMessage('Instructions copied to clipboard', 'success');
+        }).catch(() => {
+            showMessage('Failed to copy to clipboard', 'error');
+        });
+    }
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.className = `mt-4 p-4 rounded-md ${type === 'error' ? 'bg-red-900 text-red-100 border border-red-700' : 'bg-green-900 text-green-100 border border-green-700'}`;
+    messageDiv.textContent = message;
+    messageDiv.classList.remove('hidden');
+    
+    setTimeout(() => {
+        messageDiv.classList.add('hidden');
+    }, 5000);
+}
+
+// Auto-generate tool ID from name
+document.getElementById('tool-name').addEventListener('input', function() {
+    const name = this.value.trim();
+    const toolIdInput = document.getElementById('tool-id');
+    
+    // Only auto-generate if tool ID is empty
+    if (!toolIdInput.value.trim() && name) {
+        const generatedId = name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+            .replace(/\s+/g, '-')         // Replace spaces with hyphens
+            .replace(/-+/g, '-')          // Replace multiple hyphens with single
+            .replace(/^-|-$/g, '');       // Remove leading/trailing hyphens
+        
+        toolIdInput.value = generatedId;
+    }
+});
+</script>
+{% endblock %}

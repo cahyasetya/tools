@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Developer Tools{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style>
+        /* Ensure all form elements use dark theme */
+        input, textarea, select {
+            background-color: rgb(55 65 81) !important; /* gray-700 */
+            border-color: rgb(75 85 99) !important; /* gray-600 */
+            color: rgb(243 244 246) !important; /* gray-100 */
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: rgb(156 163 175) !important; /* gray-400 */
+        }
+        
+        input[readonly], textarea[readonly] {
+            background-color: rgb(55 65 81) !important; /* gray-700 */
+            color: rgb(243 244 246) !important; /* gray-100 */
+        }
+        
+        /* Dark scrollbars for better consistency */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgb(31 41 55); /* gray-800 */
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgb(75 85 99); /* gray-600 */
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgb(107 114 128); /* gray-500 */
+        }
+        
+        /* Force dark theme on any accidentally white elements */
+        .bg-white {
+            background-color: rgb(31 41 55) !important; /* gray-800 */
+        }
+        
+        /* Ensure no elements have white text on dark backgrounds */
+        .text-black, .text-gray-900 {
+            color: rgb(243 244 246) !important; /* gray-100 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-800 shadow-lg border-r border-gray-700 min-h-screen">
+        <!-- Logo/Header -->
+        <div class="p-6 border-b border-gray-700">
+            <h1 class="text-xl font-bold text-gray-100">Developer Tools</h1>
+            <p class="text-sm text-gray-400 mt-1">Web Utilities</p>
+        </div>
+
+        <!-- Search -->
+        <div class="px-3 mt-4 mb-6">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Search tools..." 
+                    class="w-full pl-8 pr-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <div id="search-results" class="hidden mt-2 bg-gray-700 rounded-md border border-gray-600 max-h-64 overflow-y-auto">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mt-2">
+            <div class="px-3">
+                <a href="/" class="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors mb-1 group">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Home
+                </a>
+                
+                <div class="mt-6 mb-3">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tools</h3>
+                </div>
+                
+                <a href="/base64" class="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors mb-1 group" data-shortcut="1">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Base64 Encoder
+                </a>
+                
+                <a href="/json-beautify" class="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors mb-1 group" data-shortcut="2">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    JSON Beautify
+                </a>
+                
+                <a href="/json-diff" class="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors mb-1 group" data-shortcut="3">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    JSON Diff
+                </a>
+                
+                <a href="/epoch-converter" class="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors mb-1 group" data-shortcut="4">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Epoch Converter
+                </a>
+            </div>
+        </nav>
+
+        <!-- Footer -->
+        <div class="absolute bottom-0 w-64 p-4 border-t border-gray-700">
+            <p class="text-xs text-gray-500">CTools v1.0</p>
+            <p class="text-xs text-gray-600">Developer Utilities</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+        <!-- Top bar (optional) -->
+        <div class="bg-gray-800 border-b border-gray-700 px-6 py-4 lg:hidden">
+            <button id="sidebar-toggle" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <main class="p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- CTools JavaScript Framework -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/base-tool.js"></script>
+    
+    <!-- Core System -->
+    <script src="/static/js/core/tool-registry.js"></script>
+    <script src="/static/js/core/tool-loader.js"></script>
+    <script src="/static/js/core/app-manager.js"></script>
+    
+    <!-- Fallback tools (for backward compatibility) -->
+    <script src="/static/js/tools.js"></script>
+    
+    <!-- Debug utilities (development only) -->
+    <script src="/static/js/debug.js"></script>
+    
+    <!-- Application initialization -->
+    <script>
+        // Initialize application when DOM is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            await appManager.init();
+            
+            // Legacy support for existing onclick handlers
+            window.legacyFunctions = {
+                encodeText: () => appManager.currentTool?.encodeText?.(),
+                decodeText: () => appManager.currentTool?.decodeText?.(),
+                beautifyJSON: () => appManager.currentTool?.beautifyJSON?.(),
+                minifyJSON: () => appManager.currentTool?.minifyJSON?.(),
+                validateJSON: () => appManager.currentTool?.validateJSON?.(),
+                clearInput: () => appManager.currentTool?.clearAll?.(),
+                compareJSON: () => appManager.currentTool?.compareJSON?.(),
+                validateJSON1: () => appManager.currentTool?.validateJSON1?.(),
+                validateJSON2: () => appManager.currentTool?.validateJSON2?.(),
+                clearJSON: (field) => {
+                    if (field === 'json1-input') appManager.currentTool?.clearJSON1?.();
+                    if (field === 'json2-input') appManager.currentTool?.clearJSON2?.();
+                },
+                clearDiff: () => appManager.currentTool?.clearDiff?.(),
+                copyToClipboard: (elementId) => ui.copyElementValue(elementId)
+            };
+            
+            // Make legacy functions available globally
+            Object.assign(window, window.legacyFunctions);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            appManager.cleanup();
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        
+        // Tools data for search
+        const tools = [
+            { name: 'Base64 Encoder', url: '/base64', description: 'Encode and decode Base64 strings', keywords: ['base64', 'encode', 'decode', 'encoding'] },
+            { name: 'JSON Beautifier', url: '/json-beautify', description: 'Format and prettify JSON data', keywords: ['json', 'beautify', 'format', 'pretty', 'validate'] },
+            { name: 'JSON Diff', url: '/json-diff', description: 'Compare two JSON objects', keywords: ['json', 'diff', 'compare', 'difference'] },
+            { name: 'Epoch Converter', url: '/epoch-converter', description: 'Convert timestamps to human dates', keywords: ['epoch', 'timestamp', 'unix', 'time', 'date', 'converter'] }
+        ];
+        
+        let selectedIndex = -1;
+        let currentResults = [];
+        
+        function performSearch(query) {
+            if (!query.trim()) {
+                searchResults.classList.add('hidden');
+                selectedIndex = -1;
+                currentResults = [];
+                return;
+            }
+            
+            const filtered = tools.filter(tool => {
+                const searchText = query.toLowerCase();
+                return tool.name.toLowerCase().includes(searchText) ||
+                       tool.description.toLowerCase().includes(searchText) ||
+                       tool.keywords.some(keyword => keyword.includes(searchText));
+            });
+            
+            currentResults = filtered;
+            selectedIndex = filtered.length > 0 ? 0 : -1; // Auto-select first result
+            
+            if (filtered.length === 0) {
+                searchResults.innerHTML = '<div class="p-3 text-gray-400 text-sm">No tools found</div>';
+                searchResults.classList.remove('hidden');
+                return;
+            }
+            
+            renderSearchResults();
+            searchResults.classList.remove('hidden');
+        }
+        
+        function renderSearchResults() {
+            searchResults.innerHTML = currentResults.map((tool, index) => 
+                `<a href="${tool.url}" data-index="${index}" class="search-result block px-3 py-2 text-gray-100 border-b border-gray-600 last:border-b-0 ${
+                    index === selectedIndex ? 'bg-blue-600 hover:bg-blue-600' : 'hover:bg-gray-600'
+                }">
+                    <div class="font-medium text-sm">${tool.name}</div>
+                    <div class="text-xs text-gray-400 mt-1">${tool.description}</div>
+                </a>`
+            ).join('');
+        }
+        
+        function navigateResults(direction) {
+            if (currentResults.length === 0) return;
+            
+            if (direction === 'down') {
+                selectedIndex = selectedIndex < currentResults.length - 1 ? selectedIndex + 1 : 0;
+            } else if (direction === 'up') {
+                selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : currentResults.length - 1;
+            }
+            
+            renderSearchResults();
+        }
+        
+        function selectCurrentResult() {
+            if (selectedIndex >= 0 && selectedIndex < currentResults.length) {
+                window.location.href = currentResults[selectedIndex].url;
+            }
+        }
+        
+        let searchTimeout;
+        searchInput?.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => performSearch(e.target.value), 150);
+        });
+        
+        // Handle keyboard navigation in search input
+        searchInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateResults('down');
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateResults('up');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                selectCurrentResult();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                searchResults.classList.add('hidden');
+                selectedIndex = -1;
+                searchInput.blur();
+            }
+        });
+        
+        // Hide search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput?.contains(e.target) && !searchResults?.contains(e.target)) {
+                searchResults?.classList.add('hidden');
+            }
+        });
+        
+        // Show search results when focusing search input
+        searchInput?.addEventListener('focus', (e) => {
+            if (e.target.value.trim()) {
+                performSearch(e.target.value);
+            }
+        });
+        
+        // Sidebar navigation
+        let currentNavIndex = -1;
+        const navItems = [];
+        
+        function initNavigation() {
+            // Get all navigation links
+            const navLinks = document.querySelectorAll('nav a[href]');
+            navItems.length = 0;
+            navLinks.forEach(link => navItems.push(link));
+        }
+        
+        function highlightNavItem(index) {
+            // Remove previous highlights
+            navItems.forEach(item => {
+                item.classList.remove('bg-blue-600');
+                item.classList.add('hover:bg-gray-700');
+            });
+            
+            // Add highlight to current item
+            if (index >= 0 && index < navItems.length) {
+                navItems[index].classList.add('bg-blue-600');
+                navItems[index].classList.remove('hover:bg-gray-700');
+                navItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        
+        function navigateToCurrentItem() {
+            if (currentNavIndex >= 0 && currentNavIndex < navItems.length) {
+                navItems[currentNavIndex].click();
+            }
+        }
+        
+        // Global keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Search shortcut
+            if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+                console.log('Search shortcut triggered:', e.key, 'metaKey:', e.metaKey, 'ctrlKey:', e.ctrlKey);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                    console.log('Search input focused');
+                } else {
+                    console.log('Search input not found');
+                }
+                return;
+            }
+            
+            // Navigation shortcuts (only when not focused on input elements)
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                // Number shortcuts (0-9)
+                if (/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    
+                    // 0 for search
+                    if (e.key === '0') {
+                        const searchInput = document.getElementById('search-input');
+                        if (searchInput) {
+                            searchInput.focus();
+                            searchInput.select();
+                        }
+                        return;
+                    }
+                    
+                    // 1-9 for tools
+                    const shortcutLink = document.querySelector(`a[data-shortcut="${e.key}"]`);
+                    if (shortcutLink) {
+                        shortcutLink.click();
+                    }
+                    return;
+                }
+                
+                // Vim-style navigation
+                if (e.key === 'j' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentNavIndex = currentNavIndex < navItems.length - 1 ? currentNavIndex + 1 : 0;
+                    highlightNavItem(currentNavIndex);
+                } else if (e.key === 'k' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentNavIndex = currentNavIndex > 0 ? currentNavIndex - 1 : navItems.length - 1;
+                    highlightNavItem(currentNavIndex);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    navigateToCurrentItem();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    currentNavIndex = -1;
+                    highlightNavItem(-1);
+                }
+            }
+        });
+        
+        // Initialize navigation on page load
+        initNavigation();
+    </script>
+</body>
+</html>

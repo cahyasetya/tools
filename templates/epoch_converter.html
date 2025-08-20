@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Epoch Converter - CTools{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-100 mb-8">⏰ Epoch Converter</h1>
+    
+    <!-- Live Clock -->
+    <div class="mb-8">
+        <div id="live-clock" class="max-w-md mx-auto">
+            <!-- Live clock will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Timestamp to Human -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h2 class="text-xl font-semibold text-gray-100 mb-4">🔢 Timestamp to Human</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="timestamp-input" class="block text-sm font-medium text-gray-300 mb-2">Unix Timestamp</label>
+                    <input type="text" id="timestamp-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono" placeholder="1640995200">
+                    <p class="text-xs text-gray-500 mt-1">Supports seconds (10 digits), milliseconds (13 digits), or microseconds (16 digits)</p>
+                </div>
+                
+                <button id="to-human-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                    Convert to Human Time
+                </button>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label for="datetime-output" class="block text-sm font-medium text-gray-300 mb-2">Local Time</label>
+                        <input type="text" id="datetime-output" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 font-mono" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="iso-output" class="block text-sm font-medium text-gray-300 mb-2">ISO 8601</label>
+                        <input type="text" id="iso-output" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 font-mono text-sm" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="utc-output" class="block text-sm font-medium text-gray-300 mb-2">UTC</label>
+                        <input type="text" id="utc-output" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 font-mono text-sm" readonly>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button onclick="copyToClipboard('datetime-output')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                        Copy Local
+                    </button>
+                    <button onclick="copyToClipboard('iso-output')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                        Copy ISO
+                    </button>
+                    <button onclick="copyToClipboard('utc-output')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                        Copy UTC
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Human to Timestamp -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h2 class="text-xl font-semibold text-gray-100 mb-4">📅 Human to Timestamp</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="datetime-input" class="block text-sm font-medium text-gray-300 mb-2">Date & Time</label>
+                    <input type="text" id="datetime-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="2024-01-01 12:00:00">
+                    <p class="text-xs text-gray-500 mt-1">Examples: "2024-01-01", "Jan 1, 2024 12:00 PM", "2024-01-01T12:00:00Z"</p>
+                </div>
+                
+                <button id="to-timestamp-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                    Convert to Timestamp
+                </button>
+                
+                <div>
+                    <label for="timestamp-output" class="block text-sm font-medium text-gray-300 mb-2">Unix Timestamp (seconds)</label>
+                    <input type="text" id="timestamp-output" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 font-mono" readonly>
+                </div>
+                
+                <button onclick="copyToClipboard('timestamp-output')" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                    Copy Timestamp
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="mt-8 bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <h2 class="text-xl font-semibold text-gray-100 mb-4">⚡ Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button id="current-time-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                🕐 Current Time
+            </button>
+            <button onclick="loadSampleTimestamps()" class="bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                📋 Sample Timestamps
+            </button>
+            <button id="clear-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                🗑️ Clear All
+            </button>
+        </div>
+    </div>
+    
+    <!-- Additional Information -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Timestamp Formats -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-100 mb-4">📊 Timestamp Formats</h3>
+            <div id="timestamp-formats" class="text-gray-400">
+                <!-- Will be populated by JavaScript -->
+                <p class="text-center py-8">Convert a timestamp to see different formats</p>
+            </div>
+        </div>
+        
+        <!-- Timezone Conversions -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-100 mb-4">🌍 Timezone Conversions</h3>
+            <div id="timezone-conversions" class="text-gray-400">
+                <!-- Will be populated by JavaScript -->
+                <p class="text-center py-8">Convert a timestamp to see timezone conversions</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Information Panel -->
+    <div class="mt-8 bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-100 mb-4">ℹ️ About Unix Timestamps</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-300">
+            <div>
+                <h4 class="font-semibold text-gray-200 mb-2">What is Unix Timestamp?</h4>
+                <p class="mb-3">Unix timestamp (also known as Epoch time) is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC.</p>
+                
+                <h4 class="font-semibold text-gray-200 mb-2">Common Formats:</h4>
+                <ul class="space-y-1 text-gray-400">
+                    <li>• <span class="font-mono">10 digits</span> - Seconds (standard)</li>
+                    <li>• <span class="font-mono">13 digits</span> - Milliseconds (JavaScript)</li>
+                    <li>• <span class="font-mono">16 digits</span> - Microseconds</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold text-gray-200 mb-2">Supported Date Formats:</h4>
+                <ul class="space-y-1 text-gray-400">
+                    <li>• <span class="font-mono">2024-01-01</span></li>
+                    <li>• <span class="font-mono">2024-01-01 12:00:00</span></li>
+                    <li>• <span class="font-mono">Jan 1, 2024 12:00 PM</span></li>
+                    <li>• <span class="font-mono">2024-01-01T12:00:00Z</span></li>
+                    <li>• <span class="font-mono">1/1/2024</span></li>
+                </ul>
+                
+                <h4 class="font-semibold text-gray-200 mb-2 mt-4">Tips:</h4>
+                <ul class="space-y-1 text-gray-400">
+                    <li>• All times are interpreted in your local timezone</li>
+                    <li>• Use 'Z' suffix for UTC times</li>
+                    <li>• ISO 8601 format is recommended</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div id="message" class="mt-4 hidden p-4 rounded-md"></div>
+</div>
+
+<script>
+// Sample timestamps for testing
+function loadSampleTimestamps() {
+    const samples = [
+        { name: "Current Time", value: Math.floor(Date.now() / 1000) },
+        { name: "Unix Epoch Start", value: 0 },
+        { name: "Y2K", value: 946684800 },
+        { name: "2024 New Year", value: 1704067200 },
+        { name: "One Hour Ago", value: Math.floor(Date.now() / 1000) - 3600 },
+        { name: "One Day Ago", value: Math.floor(Date.now() / 1000) - 86400 }
+    ];
+    
+    let message = "Sample timestamps:\\n\\n";
+    samples.forEach(sample => {
+        message += `${sample.name}: ${sample.value}\\n`;
+    });
+    
+    alert(message);
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    if (element && element.value.trim()) {
+        navigator.clipboard.writeText(element.value.trim()).then(() => {
+            showMessage('Copied to clipboard', 'success');
+        }).catch(() => {
+            showMessage('Failed to copy to clipboard', 'error');
+        });
+    } else {
+        showMessage('Nothing to copy', 'error');
+    }
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.className = `mt-4 p-4 rounded-md ${type === 'error' ? 'bg-red-900 text-red-100 border border-red-700' : 'bg-green-900 text-green-100 border border-green-700'}`;
+    messageDiv.textContent = message;
+    messageDiv.classList.remove('hidden');
+    
+    setTimeout(() => {
+        messageDiv.classList.add('hidden');
+    }, 3000);
+}
+
+// Conversion functions
+function convertToHuman() {
+    const input = document.getElementById('timestamp-input').value.trim();
+    
+    if (!input) {
+        showMessage('Please enter a Unix timestamp', 'error');
+        return;
+    }
+
+    try {
+        let timestamp = parseInt(input);
+        
+        // Handle different timestamp formats
+        if (timestamp.toString().length === 13) {
+            // Milliseconds timestamp
+            timestamp = timestamp / 1000;
+        } else if (timestamp.toString().length === 10) {
+            // Seconds timestamp (standard)
+        } else if (timestamp.toString().length === 16) {
+            // Microseconds timestamp
+            timestamp = timestamp / 1000000;
+        } else {
+            throw new Error('Invalid timestamp format. Expected 10, 13, or 16 digits');
+        }
+
+        const date = new Date(timestamp * 1000);
+        
+        if (isNaN(date.getTime())) {
+            throw new Error('Invalid timestamp');
+        }
+
+        // Generate different formats
+        const localDate = date.toLocaleString();
+        const isoDate = date.toISOString();
+        const utcDate = date.toUTCString();
+
+        document.getElementById('datetime-output').value = localDate;
+        document.getElementById('iso-output').value = isoDate;
+        document.getElementById('utc-output').value = utcDate;
+
+        displayTimezoneConversions(date);
+        displayTimestampFormats(Math.floor(timestamp), timestamp * 1000);
+        showMessage('Timestamp converted successfully', 'success');
+
+    } catch (error) {
+        showMessage(`Error: ${error.message}`, 'error');
+    }
+}
+
+function convertToTimestamp() {
+    const input = document.getElementById('datetime-input').value.trim();
+    
+    if (!input) {
+        showMessage('Please enter a date/time', 'error');
+        return;
+    }
+
+    try {
+        const date = new Date(input);
+        
+        if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format');
+        }
+
+        const timestamp = Math.floor(date.getTime() / 1000);
+        const timestampMs = date.getTime();
+
+        document.getElementById('timestamp-output').value = timestamp.toString();
+        
+        // Show additional timestamp formats
+        displayTimestampFormats(timestamp, timestampMs);
+        showMessage('Date converted to timestamp successfully', 'success');
+
+    } catch (error) {
+        showMessage(`Error: ${error.message}`, 'error');
+    }
+}
+
+function getCurrentTime() {
+    const now = new Date();
+    const timestamp = Math.floor(now.getTime() / 1000);
+    const timestampMs = now.getTime();
+
+    // Fill in all fields with current time
+    document.getElementById('timestamp-input').value = timestamp.toString();
+    document.getElementById('datetime-input').value = now.toLocaleString();
+    document.getElementById('timestamp-output').value = timestamp.toString();
+    document.getElementById('datetime-output').value = now.toLocaleString();
+    document.getElementById('iso-output').value = now.toISOString();
+    document.getElementById('utc-output').value = now.toUTCString();
+
+    displayTimestampFormats(timestamp, timestampMs);
+    displayTimezoneConversions(now);
+    
+    showMessage('Current time loaded', 'success');
+}
+
+function clearAll() {
+    document.getElementById('timestamp-input').value = '';
+    document.getElementById('datetime-input').value = '';
+    document.getElementById('timestamp-output').value = '';
+    document.getElementById('datetime-output').value = '';
+    document.getElementById('iso-output').value = '';
+    document.getElementById('utc-output').value = '';
+    
+    // Clear additional outputs
+    const timestampFormats = document.getElementById('timestamp-formats');
+    const timezoneConversions = document.getElementById('timezone-conversions');
+    
+    if (timestampFormats) timestampFormats.innerHTML = '<p class="text-center py-8">Convert a timestamp to see different formats</p>';
+    if (timezoneConversions) timezoneConversions.innerHTML = '<p class="text-center py-8">Convert a timestamp to see timezone conversions</p>';
+}
+
+// Helper functions
+function displayTimestampFormats(timestamp, timestampMs) {
+    const formatsElement = document.getElementById('timestamp-formats');
+    if (formatsElement) {
+        formatsElement.innerHTML = `
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Seconds:</span>
+                    <span class="font-mono text-gray-100">${timestamp}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Milliseconds:</span>
+                    <span class="font-mono text-gray-100">${timestampMs}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Microseconds:</span>
+                    <span class="font-mono text-gray-100">${timestampMs * 1000}</span>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function displayTimezoneConversions(date) {
+    const timezonesElement = document.getElementById('timezone-conversions');
+    const timezones = [
+        'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 
+        'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 
+        'Europe/Berlin', 'Asia/Tokyo', 'Asia/Shanghai', 'Australia/Sydney'
+    ];
+    
+    if (timezonesElement) {
+        const conversions = timezones.map(tz => {
+            try {
+                const formatted = date.toLocaleString('en-US', {
+                    timeZone: tz,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                return `
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">${tz}:</span>
+                        <span class="font-mono text-gray-100">${formatted}</span>
+                    </div>
+                `;
+            } catch (e) {
+                return `
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">${tz}:</span>
+                        <span class="text-red-400">Error</span>
+                    </div>
+                `;
+            }
+        }).join('');
+
+        timezonesElement.innerHTML = `<div class="space-y-2 text-sm">${conversions}</div>`;
+    }
+}
+
+function startRealTimeClock() {
+    const clockElement = document.getElementById('live-clock');
+    if (clockElement) {
+        const updateClock = () => {
+            const now = new Date();
+            const timestamp = Math.floor(now.getTime() / 1000);
+            clockElement.innerHTML = `
+                <div class="text-center p-4 bg-gray-700 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-400">${timestamp}</div>
+                    <div class="text-sm text-gray-400">${now.toLocaleString()}</div>
+                    <div class="text-xs text-gray-500">Live Unix Timestamp</div>
+                </div>
+            `;
+        };
+        
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+}
+
+// Auto-populate current timestamp on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Epoch converter page loaded');
+    startRealTimeClock();
+    
+    // Bind button events
+    document.getElementById('to-human-btn')?.addEventListener('click', convertToHuman);
+    document.getElementById('to-timestamp-btn')?.addEventListener('click', convertToTimestamp);
+    document.getElementById('current-time-btn')?.addEventListener('click', getCurrentTime);
+    document.getElementById('clear-btn')?.addEventListener('click', clearAll);
+});
+</script>
+{% endblock %}

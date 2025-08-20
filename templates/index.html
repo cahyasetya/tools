@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center max-w-6xl mx-auto">
+    <h1 class="text-4xl font-bold text-gray-100 mb-4">Welcome to Developer Tools</h1>
+    <p class="text-lg text-gray-400 mb-12">Simple web-based utilities for developers</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <a href="/base64" class="block p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all border border-gray-700">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-100 mb-2">Base64 Encoder/Decoder</h3>
+                <p class="text-gray-400">Encode and decode Base64 strings</p>
+            </div>
+        </a>
+        
+        <a href="/json-beautify" class="block p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all border border-gray-700">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-green-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-100 mb-2">JSON Beautifier</h3>
+                <p class="text-gray-400">Format and prettify JSON data</p>
+            </div>
+        </a>
+        
+        <a href="/json-diff" class="block p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all border border-gray-700">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-purple-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-100 mb-2">JSON Diff</h3>
+                <p class="text-gray-400">Compare two JSON objects</p>
+            </div>
+        </a>
+        
+        <a href="/epoch-converter" class="block p-6 bg-gray-800 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-700 transition-all border border-gray-700">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-orange-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-100 mb-2">Epoch Converter</h3>
+                <p class="text-gray-400">Convert timestamps to human dates</p>
+            </div>
+        </a>
+    </div>
+    
+</div>
+{% endblock %}

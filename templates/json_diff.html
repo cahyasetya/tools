@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}JSON Diff - Developer Tools{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-100 mb-8">JSON Diff Tool</h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- JSON 1 Input -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h2 class="text-xl font-semibold text-gray-100 mb-4">JSON 1 (Original)</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="json1-input" class="block text-sm font-medium text-gray-300 mb-2">First JSON</label>
+                    <textarea id="json1-input" rows="15" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm" placeholder='{"name": "John", "age": 30}'></textarea>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="validateJSON('json1-input')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                        Validate JSON 1
+                    </button>
+                    <button onclick="clearJSON('json1-input')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON 2 Input -->
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+            <h2 class="text-xl font-semibold text-gray-100 mb-4">JSON 2 (Modified)</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="json2-input" class="block text-sm font-medium text-gray-300 mb-2">Second JSON</label>
+                    <textarea id="json2-input" rows="15" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm" placeholder='{"name": "Jane", "age": 25, "city": "NYC"}'></textarea>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="validateJSON('json2-input')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                        Validate JSON 2
+                    </button>
+                    <button onclick="clearJSON('json2-input')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compare Button -->
+    <div class="text-center mb-6">
+        <button onclick="compareJSON()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded-md transition-colors text-lg">
+            Compare JSONs
+        </button>
+    </div>
+
+    <!-- Diff Output -->
+    <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-100">Diff Result</h2>
+            <div class="flex space-x-2">
+                <button onclick="copyToClipboard('diff-output')" class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                    Copy Diff
+                </button>
+                <button onclick="clearDiff()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                    Clear Result
+                </button>
+            </div>
+        </div>
+        <div>
+            <pre id="diff-output" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 font-mono text-sm whitespace-pre-wrap min-h-64 max-h-96 overflow-y-auto">Diff result will appear here...</pre>
+        </div>
+    </div>
+
+    <!-- Diff Legend -->
+    <div class="mt-6 bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-100 mb-4">Diff Legend</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="text-green-400 font-mono">+ </span>
+                <span class="text-sm text-gray-400">Added lines (present in JSON 2)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-red-400 font-mono">- </span>
+                <span class="text-sm text-gray-400">Removed lines (only in JSON 1)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-400 font-mono">  </span>
+                <span class="text-sm text-gray-400">Unchanged lines</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div id="message" class="mt-4 hidden p-4 rounded-md"></div>
+</div>
+
+<script>
+async function compareJSON() {
+    const json1 = document.getElementById('json1-input').value.trim();
+    const json2 = document.getElementById('json2-input').value.trim();
+    const output = document.getElementById('diff-output');
+    
+    if (!json1 || !json2) {
+        showMessage('Please enter both JSON inputs to compare', 'error');
+        return;
+    }
+    
+    // Validate both JSONs first
+    try {
+        JSON.parse(json1);
+        JSON.parse(json2);
+    } catch (error) {
+        showMessage('One or both JSON inputs are invalid: ' + error.message, 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/json/diff', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                json1: json1, 
+                json2: json2 
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            showMessage('Error comparing JSONs: ' + data.error, 'error');
+        } else {
+            if (data.result.trim() === '') {
+                output.textContent = 'No differences found - JSONs are identical!';
+                output.className = output.className + ' text-green-400';
+            } else {
+                output.textContent = data.result;
+                output.className = output.className.replace(' text-green-400', '');
+                
+                // Color-code the diff lines
+                output.innerHTML = colorCodeDiff(data.result);
+            }
+            showMessage('JSON comparison completed', 'success');
+        }
+    } catch (error) {
+        showMessage('Error comparing JSONs: ' + error.message, 'error');
+    }
+}
+
+function colorCodeDiff(diffText) {
+    const lines = diffText.split('\n');
+    return lines.map(line => {
+        if (line.startsWith('+++') || line.startsWith('---')) {
+            return `<span class="font-bold text-gray-300">${escapeHtml(line)}</span>`;
+        } else if (line.startsWith('+')) {
+            return `<span class="text-green-400 bg-green-900/20">${escapeHtml(line)}</span>`;
+        } else if (line.startsWith('-')) {
+            return `<span class="text-red-400 bg-red-900/20">${escapeHtml(line)}</span>`;
+        } else if (line.startsWith('@@')) {
+            return `<span class="text-blue-400 font-semibold">${escapeHtml(line)}</span>`;
+        } else {
+            return escapeHtml(line);
+        }
+    }).join('\n');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function validateJSON(inputId) {
+    const input = document.getElementById(inputId).value.trim();
+    const jsonNumber = inputId.includes('json1') ? '1' : '2';
+    
+    if (!input) {
+        showMessage(`Please enter JSON ${jsonNumber} to validate`, 'error');
+        return;
+    }
+    
+    try {
+        JSON.parse(input);
+        showMessage(`✓ JSON ${jsonNumber} is valid`, 'success');
+    } catch (error) {
+        showMessage(`✗ JSON ${jsonNumber} is invalid: ` + error.message, 'error');
+    }
+}
+
+function clearJSON(inputId) {
+    document.getElementById(inputId).value = '';
+}
+
+function clearDiff() {
+    const output = document.getElementById('diff-output');
+    output.textContent = 'Diff result will appear here...';
+    output.className = output.className.replace(' text-green-400', '');
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent;
+    
+    if (text && text !== 'Diff result will appear here...') {
+        navigator.clipboard.writeText(text);
+        showMessage('Diff copied to clipboard', 'success');
+    } else {
+        showMessage('Nothing to copy', 'error');
+    }
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.className = `mt-4 p-4 rounded-md ${type === 'error' ? 'bg-red-900 text-red-100 border border-red-700' : 'bg-green-900 text-green-100 border border-green-700'}`;
+    messageDiv.textContent = message;
+    messageDiv.classList.remove('hidden');
+    
+    setTimeout(() => {
+        messageDiv.classList.add('hidden');
+    }, 5000);
+}
+</script>
+{% endblock %}
