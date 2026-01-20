@@ -95,4 +95,117 @@
 </div>
 
 <script>
+    const API_BASE = '';
+
+    const json1Input = document.getElementById('json1-input');
+    const json2Input = document.getElementById('json2-input');
+    const diffOutput = document.getElementById('diff-output');
+    const compareBtn = document.getElementById('compare-btn');
+    const clearJson1Btn = document.getElementById('clear-json1-btn');
+    const clearJson2Btn = document.getElementById('clear-json2-btn');
+    const clearDiffBtn = document.getElementById('clear-diff-btn');
+    const validateJson1Btn = document.getElementById('validate-json1-btn');
+    const validateJson2Btn = document.getElementById('validate-json2-btn');
+    const copyDiffOutputBtn = document.getElementById('copy-diff-output-btn');
+    const messageDiv = document.getElementById('message');
+
+    function showMessage(text, isError = false) {
+        messageDiv.textContent = text;
+        messageDiv.className = `mt-4 p-4 rounded-md ${isError ? 'bg-red-900 text-red-200 border border-red-700' : 'bg-green-900 text-green-200 border border-green-700'}`;
+        messageDiv.classList.remove('hidden');
+        setTimeout(() => messageDiv.classList.add('hidden'), 3000);
+    }
+
+    function validateJSON(text, jsonName) {
+        try {
+            JSON.parse(text);
+            showMessage(`${jsonName} is valid JSON!`, false);
+            return true;
+        } catch (e) {
+            showMessage(`${jsonName} Error: ${e.message}`, true);
+            return false;
+        }
+    }
+
+    validateJson1Btn.addEventListener('click', () => {
+        const text = json1Input.value.trim();
+        if (!text) {
+            showMessage('JSON 1 is empty!', true);
+            return;
+        }
+        validateJSON(text, 'JSON 1');
+    });
+
+    validateJson2Btn.addEventListener('click', () => {
+        const text = json2Input.value.trim();
+        if (!text) {
+            showMessage('JSON 2 is empty!', true);
+            return;
+        }
+        validateJSON(text, 'JSON 2');
+    });
+
+    compareBtn.addEventListener('click', async () => {
+        const json1 = json1Input.value.trim();
+        const json2 = json2Input.value.trim();
+
+        if (!json1 || !json2) {
+            showMessage('Both JSON inputs are required!', true);
+            return;
+        }
+
+        // Validate both JSONs first
+        if (!validateJSON(json1, 'JSON 1') || !validateJSON(json2, 'JSON 2')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/api/json/diff`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ json1, json2 })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                diffOutput.textContent = data.result || 'No differences found';
+                showMessage('Comparison completed!', false);
+            } else {
+                showMessage(`Error: ${data.error}`, true);
+            }
+        } catch (error) {
+            showMessage(`Request failed: ${error.message}`, true);
+        }
+    });
+
+    clearJson1Btn.addEventListener('click', () => {
+        json1Input.value = '';
+    });
+
+    clearJson2Btn.addEventListener('click', () => {
+        json2Input.value = '';
+    });
+
+    clearDiffBtn.addEventListener('click', () => {
+        diffOutput.textContent = 'Diff result will appear here...';
+    });
+
+    copyDiffOutputBtn.addEventListener('click', async () => {
+        const text = diffOutput.textContent;
+        if (text === 'Diff result will appear here...') {
+            showMessage('No diff to copy!', true);
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(text);
+            showMessage('Diff copied to clipboard!', false);
+        } catch (err) {
+            showMessage('Failed to copy to clipboard', true);
+        }
+    });
+</script>
 {% endblock %}
