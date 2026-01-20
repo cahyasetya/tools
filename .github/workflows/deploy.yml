@@ -2,22 +2,9 @@ name: Deploy to Vultr VM
 
 on:
   push:
-    branches:
-      - master
     tags:
       - 'v*.*.*'
   workflow_dispatch:
-    inputs:
-      version_bump:
-        description: 'Version bump type (none to skip versioning)'
-        required: false
-        type: choice
-        options:
-          - none
-          - patch
-          - minor
-          - major
-        default: 'none'
 
 jobs:
   deploy:
@@ -26,16 +13,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch all history and tags for version bumping
 
-      - name: Create version tag
-        if: github.event.inputs.version_bump != 'none' && github.event.inputs.version_bump != ''
+      - name: Get version
+        id: version
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          chmod +x deploy/bump-version.sh
-          ./deploy/bump-version.sh ${{ github.event.inputs.version_bump }}
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Deploying version: $VERSION"
+          else
+            echo "version=manual" >> $GITHUB_OUTPUT
+            echo "Manual deployment (no tag)"
+          fi
 
       - name: GitOps Deploy to VM
         uses: appleboy/ssh-action@v1.0.3
@@ -60,3 +49,17 @@ jobs:
             # GitOps: Run declarative deployment script from repository
             chmod +x deploy/deploy.sh
             ./deploy/deploy.sh
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Deployment Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** ${{ secrets.VM_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.version.outputs.version }}" != "manual" ]]; then
+            echo "Deployed tagged version ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Manual deployment triggered" >> $GITHUB_STEP_SUMMARY
+          fi
