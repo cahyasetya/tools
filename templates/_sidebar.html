@@ -1,18 +1,26 @@
 <!-- Sidebar -->
-<div class="w-64 bg-gray-800 shadow-lg border-r border-gray-700 min-h-screen">
+<div id="sidebar" class="fixed lg:static inset-0 z-40 w-64 bg-gray-800 shadow-lg border-r border-gray-700 min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out">
     <!-- Logo/Header -->
-    <div class="p-6 border-b border-gray-700">
-        <h1 class="text-xl font-bold text-gray-100">Developer Tools</h1>
-        <p class="text-sm text-gray-400 mt-1">Web Utilities</p>
+    <div class="p-4 lg:p-6 border-b border-gray-700 flex justify-between items-center">
+        <div>
+            <h1 class="text-lg lg:text-xl font-bold text-gray-100">Developer Tools</h1>
+            <p class="text-xs lg:text-sm text-gray-400 mt-1">Web Utilities</p>
+        </div>
+        <!-- Close button for mobile -->
+        <button id="sidebar-close" class="lg:hidden text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
     </div>
 
     <!-- Search -->
     <div class="px-3 mt-4 mb-6">
         <div class="relative">
-            <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Search tools..." 
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search tools..."
                 class="w-full pl-8 pr-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
             <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +33,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="mt-2">
+    <nav class="mt-2 pb-20 lg:pb-24 overflow-y-auto" style="max-height: calc(100vh - 300px);">
         <div class="px-3">
             <!-- Navigation links will be dynamically generated -->
             <div class="text-center text-gray-400 text-sm py-4">
@@ -35,8 +43,11 @@
     </nav>
 
     <!-- Footer -->
-    <div class="absolute bottom-0 w-64 p-4 border-t border-gray-700">
+    <div class="absolute bottom-0 w-64 p-4 border-t border-gray-700 bg-gray-800">
         <p class="text-xs text-gray-500">CTools v1.0</p>
         <p class="text-xs text-gray-600">Developer Utilities</p>
     </div>
 </div>
+
+<!-- Backdrop for mobile -->
+<div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>

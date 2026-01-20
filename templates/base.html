@@ -55,23 +55,47 @@
         .text-black, .text-gray-900 {
             color: rgb(243 244 246) !important; /* gray-100 */
         }
+
+        /* Mobile improvements */
+        @media (max-width: 640px) {
+            /* Better touch targets on mobile */
+            button, a {
+                min-height: 44px;
+            }
+
+            /* Improve text readability on mobile */
+            textarea {
+                font-size: 16px !important; /* Prevents auto-zoom on iOS */
+            }
+
+            input[type="text"] {
+                font-size: 16px !important; /* Prevents auto-zoom on iOS */
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex">
     {% include '_sidebar.html' %}
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
-        <!-- Top bar (optional) -->
-        <div class="bg-gray-800 border-b border-gray-700 px-6 py-4 lg:hidden">
+    <div class="flex-1 overflow-auto w-full">
+        <!-- Top bar for mobile -->
+        <div class="bg-gray-800 border-b border-gray-700 px-4 py-3 lg:hidden sticky top-0 z-20 flex items-center justify-between">
             <button id="sidebar-toggle" class="text-gray-400 hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
+            <h2 class="text-sm font-semibold text-gray-100">Developer Tools</h2>
+            <div class="w-6"></div> <!-- Spacer for centering -->
         </div>
 
-        <main class="p-6">
+        <main class="p-4 md:p-6 lg:p-8 max-w-full">
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -325,6 +349,35 @@
         
         // Initialize navigation on page load
         initNavigation();
+
+        // Mobile sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarClose = document.getElementById('sidebar-close');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            sidebar?.classList.remove('-translate-x-full');
+            sidebarBackdrop?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar?.classList.add('-translate-x-full');
+            sidebarBackdrop?.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        sidebarToggle?.addEventListener('click', openSidebar);
+        sidebarClose?.addEventListener('click', closeSidebar);
+        sidebarBackdrop?.addEventListener('click', closeSidebar);
+
+        // Close sidebar when clicking a nav link on mobile
+        if (window.innerWidth < 1024) {
+            sidebar?.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', closeSidebar);
+            });
+        }
     </script>
 </body>
 </html>
