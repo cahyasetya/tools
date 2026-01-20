@@ -42,12 +42,7 @@ jobs:
             pip install --upgrade pip
             pip install -r requirements.txt
 
-            # Restart the application (adjust based on your setup)
-            # Option 1: Using systemd service
-            # sudo systemctl restart ctools
-
-            # Option 2: Kill old process and start new one
-            # pkill -f "python.*app.py" || true
-            # nohup python app.py > /var/log/ctools.log 2>&1 &
+            # Restart the application using systemd service
+            sudo systemctl restart ctools
 
             echo "Deployment completed successfully"
