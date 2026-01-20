@@ -1,18 +1,45 @@
 #!/bin/bash
-# Version management utilities
+# Version management utilities with semantic versioning support
 
 DEPLOYMENT_LOG="/opt/ctools/deploy/deployment-history.log"
 
-# Get the latest git tag
-get_latest_tag() {
-    git fetch --tags origin
-    local latest_tag=$(git tag --sort=-v:refname | head -n 1)
-    if [ -z "$latest_tag" ]; then
-        echo "No tags found. Using commit SHA instead."
-        git rev-parse --short HEAD
+# Validate semver format (v1.2.3 or 1.2.3)
+validate_semver() {
+    local version=$1
+    # Remove 'v' prefix if present
+    version=${version#v}
+
+    # Check if it matches semver pattern: MAJOR.MINOR.PATCH
+    if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+        return 0
     else
-        echo "$latest_tag"
+        return 1
     fi
+}
+
+# Get the latest semver git tag
+get_latest_tag() {
+    git fetch --tags origin 2>/dev/null
+
+    # Get all tags and filter for semver format
+    local tags=$(git tag -l)
+    local semver_tags=""
+
+    while IFS= read -r tag; do
+        if validate_semver "$tag"; then
+            semver_tags="${semver_tags}${tag}\n"
+        fi
+    done <<< "$tags"
+
+    if [ -z "$semver_tags" ]; then
+        echo "No semver tags found. Using commit SHA instead." >&2
+        git rev-parse --short HEAD
+        return
+    fi
+
+    # Sort semver tags properly and get the latest
+    local latest_tag=$(echo -e "$semver_tags" | grep -v '^$' | sort -V -r | head -n 1)
+    echo "$latest_tag"
 }
 
 # Get current deployed version
