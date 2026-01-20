@@ -6,17 +6,31 @@ set -e
 
 echo "🚀 Starting GitOps deployment..."
 
-# Load configuration
+# Load configuration and version utilities
 source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/version.sh"
 
 # Ensure we're in the app directory
 cd "$APP_DIR"
 
+# Show current version info
+show_version_info
+
 # Pull latest code from Git (single source of truth)
-echo "📥 Pulling latest code from Git..."
+echo "📥 Fetching latest version from Git..."
 if [ -d ".git" ]; then
-    git fetch origin "$GIT_BRANCH"
-    git reset --hard origin/"$GIT_BRANCH"
+    # Fetch all tags and branches
+    git fetch --tags origin "$GIT_BRANCH"
+
+    # Get the latest tag
+    DEPLOY_VERSION=$(get_latest_tag)
+    echo "🏷️  Deploying version: $DEPLOY_VERSION"
+
+    # Checkout the latest tag
+    checkout_version "$DEPLOY_VERSION"
+
+    # Log this deployment
+    log_deployment "$DEPLOY_VERSION"
 else
     echo "❌ Not a git repository. Clone first."
     exit 1

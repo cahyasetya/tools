@@ -2,8 +2,22 @@ from flask import Flask, render_template, request, jsonify
 import base64
 import json
 import difflib
+import os
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
+
+# Get application version
+def get_version():
+    version_file = '/opt/ctools/.deployed_version'
+    if os.path.exists(version_file):
+        with open(version_file, 'r') as f:
+            return f.read().strip()
+    return 'dev'
+
+# Make version available to all templates
+@app.context_processor
+def inject_version():
+    return {'app_version': get_version()}
 
 @app.route('/')
 def index():
@@ -70,18 +84,22 @@ def json_diff():
     try:
         json1 = request.json.get('json1', '')
         json2 = request.json.get('json2', '')
-        
+
         # Parse and format both JSONs
         parsed1 = json.loads(json1)
         parsed2 = json.loads(json2)
         formatted1 = json.dumps(parsed1, indent=2, sort_keys=True).splitlines()
         formatted2 = json.dumps(parsed2, indent=2, sort_keys=True).splitlines()
-        
+
         # Generate diff
         diff = list(difflib.unified_diff(formatted1, formatted2, lineterm='', fromfile='JSON 1', tofile='JSON 2'))
         return jsonify({'result': '\n'.join(diff)})
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+@app.route('/api/version')
+def api_version():
+    return jsonify({'version': get_version()})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
