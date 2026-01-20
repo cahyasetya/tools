@@ -1,0 +1,53 @@
+name: Deploy to Vultr VM
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Navigate to app directory or create it
+            mkdir -p /opt/ctools
+            cd /opt/ctools
+
+            # Clone or pull latest code
+            if [ -d ".git" ]; then
+              git pull origin main
+            else
+              git clone https://github.com/${{ github.repository }} .
+            fi
+
+            # Create virtual environment if it doesn't exist
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+
+            # Activate virtual environment and install dependencies
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+
+            # Restart the application (adjust based on your setup)
+            # Option 1: Using systemd service
+            # sudo systemctl restart ctools
+
+            # Option 2: Kill old process and start new one
+            # pkill -f "python.*app.py" || true
+            # nohup python app.py > /var/log/ctools.log 2>&1 &
+
+            echo "Deployment completed successfully"

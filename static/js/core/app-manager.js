@@ -162,6 +162,16 @@ class AppManager {
     }
 
     /**
+     * Rebind events for current tool (for dynamically generated UIs)
+     */
+    rebindCurrentTool() {
+        if (this.currentTool && typeof this.currentTool.rebindEvents === 'function') {
+            this.currentTool.rebindEvents();
+            console.log(`✅ Rebound events for current tool`);
+        }
+    }
+
+    /**
      * Initialize theme
      */
     initTheme() {

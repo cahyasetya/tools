@@ -29,6 +29,14 @@ def tool_generator():
 def epoch_converter():
     return render_template('epoch_converter.html')
 
+@app.route('/url-encoder')
+def url_encoder():
+    return render_template('url_encoder.html')
+
+@app.route('/uuid-generator')
+def uuid_generator():
+    return render_template('uuid_generator.html')
+
 @app.route('/api/base64/encode', methods=['POST'])
 def base64_encode():
     try:

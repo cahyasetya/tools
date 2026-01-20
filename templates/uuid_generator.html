@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}UUID Generator - Developer Tools{% endblock %}
+
+{% block content %}
+<script>
+    // Generate UUID Generator UI using the framework
+    document.addEventListener('DOMContentLoaded', () => {
+        // Wait for framework to be loaded
+        setTimeout(() => {
+            const container = document.querySelector('main .container');
+            if (!container) return;
+            
+            // Generate the UI using form tool template with custom configuration
+            const html = uiBuilder.buildToolUI({
+                title: 'UUID Generator',
+                maxWidth: '6xl',
+                layout: 'two-column',
+                sections: [
+                    // Configuration Section
+                    {
+                        title: 'Generator Configuration',
+                        fields: [
+                            {
+                                type: 'input',
+                                id: 'uuid-count',
+                                label: 'Number of UUIDs',
+                                placeholder: '1',
+                                value: '1'
+                            },
+                            {
+                                type: 'input',
+                                id: 'uuid-version',
+                                label: 'UUID Version',
+                                placeholder: 'v4',
+                                value: 'v4'
+                            }
+                        ],
+                        buttons: [
+                            {
+                                id: 'generate-uuid-btn',
+                                text: 'Generate UUIDs',
+                                variant: 'primary'
+                            },
+                            {
+                                id: 'generate-bulk-btn', 
+                                text: 'Generate 10',
+                                variant: 'secondary'
+                            },
+                            {
+                                id: 'clear-uuid-btn',
+                                text: 'Clear All',
+                                variant: 'neutral',
+                                fullWidth: true
+                            }
+                        ]
+                    },
+
+                    // Results Section  
+                    {
+                        title: 'Generated UUIDs',
+                        fields: [
+                            {
+                                type: 'textarea',
+                                id: 'uuid-result',
+                                label: 'Generated UUIDs',
+                                placeholder: 'Generated UUIDs will appear here...',
+                                rows: 12,
+                                readonly: true,
+                                monospace: true
+                            }
+                        ],
+                        buttons: [
+                            {
+                                id: 'copy-uuid-result-btn',
+                                text: 'Copy All UUIDs',
+                                variant: 'neutral',
+                                fullWidth: true
+                            }
+                        ]
+                    },
+
+                    // Options Section (spans both columns)
+                    {
+                        title: 'Formatting Options',
+                        className: 'md:col-span-2',
+                        fields: []
+                    },
+
+                    // Stats Section (spans both columns)
+                    {
+                        type: 'stats',
+                        className: 'md:col-span-2 mt-6',
+                        items: [
+                            { id: 'uuid-count-stat', label: 'Generated', value: '0', color: 'blue' },
+                            { id: 'version-stat', label: 'Version', value: 'V4', color: 'green' },
+                            { id: 'format-stat', label: 'Format', value: 'lower', color: 'purple' },
+                            { id: 'char-count', label: 'Characters', value: '0', color: 'yellow' }
+                        ]
+                    }
+                ]
+            });
+            
+            container.innerHTML = html;
+
+            // Add custom formatting checkboxes after the main UI is created
+            const optionsSection = container.querySelector('.md\\:col-span-2 .space-y-4');
+            if (optionsSection) {
+                const checkboxesHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="uppercase-option" class="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-800">
+                            <label for="uppercase-option" class="text-sm font-medium text-gray-300">Uppercase</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="include-hyphens" class="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-800" checked>
+                            <label for="include-hyphens" class="text-sm font-medium text-gray-300">Include Hyphens</label>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-gray-700 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-2">Version Options:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-400">
+                            <button type="button" onclick="document.getElementById('uuid-version').value='v1'" class="text-left hover:text-gray-300">
+                                <strong>v1:</strong> Timestamp-based
+                            </button>
+                            <button type="button" onclick="document.getElementById('uuid-version').value='v4'" class="text-left hover:text-gray-300">
+                                <strong>v4:</strong> Random (default)
+                            </button>
+                            <button type="button" onclick="document.getElementById('uuid-version').value='nil'" class="text-left hover:text-gray-300">
+                                <strong>nil:</strong> All zeros
+                            </button>
+                        </div>
+                    </div>
+                `;
+                optionsSection.innerHTML = checkboxesHtml;
+            }
+            
+            // Rebind events after UI is generated
+            if (window.appManager && window.appManager.rebindCurrentTool) {
+                window.appManager.rebindCurrentTool();
+            }
+            
+        }, 100);
+    });
+</script>
+
+<div class="container"></div>
+{% endblock %}

@@ -24,6 +24,14 @@ class BaseTool {
     }
 
     /**
+     * Rebind events (useful for dynamically generated UIs)
+     */
+    rebindEvents() {
+        this.bindEvents();
+        ui.initializeEnhancements();
+    }
+
+    /**
      * Bind button events
      */
     bindEvents() {

@@ -81,6 +81,11 @@
     <script src="/static/js/ui.js"></script>
     <script src="/static/js/base-tool.js"></script>
     
+    <!-- UI Framework -->
+    <script src="/static/js/framework/ui-builder.js"></script>
+    <script src="/static/js/framework/ui-templates.js"></script>
+    <script src="/static/js/framework/ui-utils.js"></script>
+    
     <!-- Core System -->
     <script src="/static/js/core/tool-registry.js"></script>
     <script src="/static/js/core/tool-loader.js"></script>
@@ -97,6 +102,12 @@
     <script>
         // Initialize application when DOM is ready
         document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize UI Framework
+            window.uiUtils = new UIUtils();
+            window.uiBuilder = new UIBuilder();
+            window.uiTemplates = new UITemplates();
+            uiUtils.init();
+            
             await appManager.init();
             
         });

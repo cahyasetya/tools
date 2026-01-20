@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}URL Encoder/Decoder - Developer Tools{% endblock %}
+
+{% block content %}
+<script>
+    // Generate UI using the framework
+    document.addEventListener('DOMContentLoaded', () => {
+        // Wait for framework to be loaded
+        setTimeout(() => {
+            const container = document.querySelector('main .container');
+            if (!container) return;
+            
+            // Generate the UI using our templates
+            const html = uiTemplates.textProcessingTool({
+                title: 'URL Encoder/Decoder',
+                inputLabel: 'URL Input',
+                outputLabel: 'Processed URL',
+                inputPlaceholder: 'https://example.com/path?param=value with spaces',
+                outputPlaceholder: 'Encoded/decoded URL will appear here...',
+                primaryAction: 'Encode URL',
+                secondaryAction: 'Decode URL',
+                showStats: true,
+                inputRows: 4,
+                outputRows: 4
+            });
+            
+            container.innerHTML = html;
+            
+            // Rebind events after UI is generated
+            if (window.appManager && window.appManager.rebindCurrentTool) {
+                window.appManager.rebindCurrentTool();
+            }
+        }, 100);
+    });
+</script>
+
+<div class="container"></div>
+{% endblock %}

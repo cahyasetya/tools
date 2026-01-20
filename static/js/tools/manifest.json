@@ -86,6 +86,30 @@
       "dependencies": [],
       "features": ["convert", "live-clock", "timezone"],
       "icon": "⏰"
+    },
+    "url-encoder": {
+      "name": "URL Encoder/Decoder",
+      "version": "1.0.0",
+      "author": "CTools Team",
+      "description": "Encode and decode URLs with proper handling of special characters",
+      "category": "web",
+      "tags": ["url", "encode", "decode", "web", "uri", "percent-encoding"],
+      "routes": ["/url-encoder"],
+      "dependencies": [],
+      "features": ["encode", "decode", "copy", "stats"],
+      "icon": "🌐"
+    },
+    "uuid-generator": {
+      "name": "UUID Generator",
+      "version": "1.0.0",
+      "author": "CTools Team",
+      "description": "Generate UUIDs (v1, v4, NIL) with customizable formatting options",
+      "category": "utility",
+      "tags": ["uuid", "guid", "generator", "unique", "identifier", "random"],
+      "routes": ["/uuid-generator"],
+      "dependencies": [],
+      "features": ["generate", "bulk", "format", "validate", "copy", "stats"],
+      "icon": "🆔"
     }
   }
 }
