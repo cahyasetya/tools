@@ -51,11 +51,22 @@ if checkout_version "$PREVIOUS_VERSION"; then
     source "$VENV_DIR/bin/activate"
     pip install -r requirements.txt
 
-    # Apply systemd service configuration
-    echo "⚙️  Applying systemd service configuration..."
+    # Generate systemd service configuration with version
+    echo "⚙️  Generating systemd service configuration..."
     if [ -f "deploy/${SERVICE_NAME}.service" ]; then
-        sudo cp "deploy/${SERVICE_NAME}.service" "$SYSTEMD_SERVICE_PATH"
+        # Create a temporary service file with version in description
+        TEMP_SERVICE="/tmp/${SERVICE_NAME}.service.tmp"
+
+        # Read the template and replace the description with version info
+        sed "s/Description=CTools Web Application/Description=CTools Web Application ($PREVIOUS_VERSION - rolled back)/" \
+            "deploy/${SERVICE_NAME}.service" > "$TEMP_SERVICE"
+
+        # Copy the modified service file
+        sudo cp "$TEMP_SERVICE" "$SYSTEMD_SERVICE_PATH"
+        rm "$TEMP_SERVICE"
+
         sudo systemctl daemon-reload
+        echo "✅ Service configured with version: $PREVIOUS_VERSION"
     fi
 
     # Restart service

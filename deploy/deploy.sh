@@ -45,12 +45,24 @@ fi
 source "$VENV_DIR/bin/activate"
 pip install -r requirements.txt
 
-# Apply systemd service configuration (declarative)
-echo "⚙️  Applying systemd service configuration..."
+# Generate systemd service configuration with version
+echo "⚙️  Generating systemd service configuration..."
 if [ -f "deploy/${SERVICE_NAME}.service" ]; then
-    sudo cp "deploy/${SERVICE_NAME}.service" "$SYSTEMD_SERVICE_PATH"
+    # Create a temporary service file with version in description
+    TEMP_SERVICE="/tmp/${SERVICE_NAME}.service.tmp"
+
+    # Read the template and replace the description with version info
+    sed "s/Description=CTools Web Application/Description=CTools Web Application ($DEPLOY_VERSION)/" \
+        "deploy/${SERVICE_NAME}.service" > "$TEMP_SERVICE"
+
+    # Copy the modified service file
+    sudo cp "$TEMP_SERVICE" "$SYSTEMD_SERVICE_PATH"
+    rm "$TEMP_SERVICE"
+
     sudo systemctl daemon-reload
     sudo systemctl enable "$SERVICE_NAME"
+
+    echo "✅ Service configured with version: $DEPLOY_VERSION"
 else
     echo "❌ Service file not found in repository"
     exit 1
