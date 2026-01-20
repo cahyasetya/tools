@@ -72,5 +72,9 @@ jobs:
           echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Bump Type:** ${{ github.event.inputs.version_bump }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The tag has been created and pushed." >> $GITHUB_STEP_SUMMARY
-          echo "Deployment will be triggered automatically." >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tag created and pushed to GitHub" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ GitHub Release created" >> $GITHUB_STEP_SUMMARY
+          echo "- 🚀 Deployment workflow will be triggered automatically" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Deploy to Vultr VM](../actions/workflows/deploy.yml) workflow for deployment status." >> $GITHUB_STEP_SUMMARY
