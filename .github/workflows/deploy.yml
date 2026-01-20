@@ -14,35 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to VM
+      - name: GitOps Deploy to VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Navigate to app directory or create it
-            mkdir -p /opt/ctools
+            # GitOps: Ensure repository exists
+            if [ ! -d "/opt/ctools/.git" ]; then
+              echo "📦 Initial setup: Cloning repository..."
+              sudo mkdir -p /opt/ctools
+              sudo chown ${{ secrets.VM_USER }}:${{ secrets.VM_USER }} /opt/ctools
+              git clone https://github.com/${{ github.repository }} /opt/ctools
+            fi
+
+            # Pull latest code first to get deployment scripts
             cd /opt/ctools
+            git pull origin master
 
-            # Clone or pull latest code
-            if [ -d ".git" ]; then
-              git pull origin master
-            else
-              git clone https://github.com/${{ github.repository }} .
-            fi
-
-            # Create virtual environment if it doesn't exist
-            if [ ! -d "venv" ]; then
-              python3 -m venv venv
-            fi
-
-            # Activate virtual environment and install dependencies
-            source venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-
-            # Restart the application using systemd service
-            sudo systemctl restart ctools
-
-            echo "Deployment completed successfully"
+            # GitOps: Run declarative deployment script from repository
+            chmod +x deploy/deploy.sh
+            ./deploy/deploy.sh
