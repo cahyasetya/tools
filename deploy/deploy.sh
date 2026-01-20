@@ -15,7 +15,8 @@ cd "$APP_DIR"
 # Pull latest code from Git (single source of truth)
 echo "📥 Pulling latest code from Git..."
 if [ -d ".git" ]; then
-    git pull origin "$GIT_BRANCH"
+    git fetch origin "$GIT_BRANCH"
+    git reset --hard origin/"$GIT_BRANCH"
 else
     echo "❌ Not a git repository. Clone first."
     exit 1

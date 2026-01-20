@@ -31,7 +31,8 @@ jobs:
 
             # Pull latest code first to get deployment scripts
             cd /opt/ctools
-            git pull origin master
+            git fetch origin master
+            git reset --hard origin/master
 
             # GitOps: Run declarative deployment script from repository
             chmod +x deploy/deploy.sh
